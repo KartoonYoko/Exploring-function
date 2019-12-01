@@ -8,10 +8,10 @@ typedef float typeOfAns;
 
 using funcType = typeOfAns(*)(typeOfAns);
 
-
+using namespace std;
 
 // метод половинного деления
-float methodOfHalfDiv(funcType f) {
+float HalfDiv(funcType f, int& iterCount) {
 	typeOfAns a, b, eps, c;
 	while ( b - a > 2 * eps) {
 		c = (a + b) / 2;
@@ -20,6 +20,7 @@ float methodOfHalfDiv(funcType f) {
 		else
 			if (f(b) * f(c) < 0)
 				a = c;
+		iterCount++; // узнать кол-во итераций
 	}
 	return (a + b) / 2;
 }
@@ -28,7 +29,7 @@ float methodOfHalfDiv(funcType f) {
 
 // метод хорд и касательных 
 // f - функция, ffd(function first derivative) - ее первая производная, fsd(function second derivative) - ее вторая производная
-float methodOfChordsAndTangets(funcType f, funcType ffd, funcType fsd) {
+float ChordsAndTangets(funcType f, funcType ffd, funcType fsd, int &iterCount) {
 	typeOfAns a, b, eps;
 	while (b - a > 2 * eps) {
 		if (f(a) * fsd(a) > 0) {
@@ -44,6 +45,7 @@ float methodOfChordsAndTangets(funcType f, funcType ffd, funcType fsd) {
 				b = d;
 				a = c;
 			}
+		iterCount++; // узнать кол-во итераций
 	}
 	return (a + b) / 2;
 }
@@ -52,19 +54,53 @@ float methodOfChordsAndTangets(funcType f, funcType ffd, funcType fsd) {
 
 int main()
 {
-	funcType f1 = [](typeOfAns x)->typeOfAns {
-		return 8 * x + 8 + pow(5, x);
-	};
-	funcType f2 = [](typeOfAns x)->typeOfAns {
-		return 5 * pow(x, 3) + 2 * pow(x, 2) - 4;
-	};
-	funcType f2fd = [](typeOfAns x)->typeOfAns {
-		return 15 * pow(x, 2) + 2 * x;
-	};
-	funcType f2sd = [](typeOfAns x)->typeOfAns {
-		return 30 * x + 4;
-	};
+	setlocale(LC_ALL, "Russian");
 
+	int itr; // кол-во итераций
+	typeOfAns ans;
+
+	{
+		funcType f1 = [](typeOfAns x)->typeOfAns {
+			return 8 * x + 8 + pow(5, x);
+		};
+		funcType f1fd = [](typeOfAns x)->typeOfAns {
+			return 8 + log(5) * pow(5, x);
+		};
+		funcType f1sd = [](typeOfAns x)->typeOfAns {
+			return log(5) * log(5) * pow(5, x);
+		};
+		cout << "Метод половинного деления" << endl;
+		ans = HalfDiv(f1, itr);
+		cout << "Ответ: " << ans << endl;
+		cout << "Количество итераций: " << itr << endl;
+
+		cout << "Метод половинного деления" << endl;
+		ans = ChordsAndTangets(f1, f1fd, f1sd, itr);
+		cout << "Ответ: " << ans << endl;
+		cout << "Количество итераций: " << itr << endl;
+
+	}
+	
+	{
+		funcType f2 = [](typeOfAns x)->typeOfAns {
+			return 5 * pow(x, 3) + 2 * pow(x, 2) - 4;
+		};
+		funcType f2fd = [](typeOfAns x)->typeOfAns {
+			return 15 * pow(x, 2) + 2 * x;
+		};
+		funcType f2sd = [](typeOfAns x)->typeOfAns {
+			return 30 * x + 4;
+		};
+		cout << "Метод половинного деления" << endl;
+		ans = HalfDiv(f2, itr);
+		cout << "Ответ: " << ans << endl;
+		cout << "Количество итераций: " << itr << endl;
+
+		cout << "Метод половинного деления" << endl;
+		ans = ChordsAndTangets(f2, f2fd, f2sd, itr);
+		cout << "Ответ: " << ans << endl;
+		cout << "Количество итераций: " << itr << endl;
+	}
 
 
 }
